@@ -74,24 +74,28 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
 
 %hook SBRingerVolumeSliderView
 
-//the not filled in part of the slider
--(UIView *)backgroundView {
- UIView *backgroundView = %orig;
- NSString *sliderBackgroundView = [_preferences objectForKey:@"sliderBg"];
- if (sliderBackgroundView) {
-  backgroundView.backgroundColor = colorFromHexString(sliderBackgroundView);
+-(NSArray *)subviews {
+ NSArray *subviews = %orig;
+ if (subviews) {
+  UIView *backgroundView = subviews[0];
+  if (backgroundView) {
+   NSString *sliderBackgroundView = [_preferences objectForKey:@"sliderBg"];
+   if (sliderBackgroundView) {
+    backgroundView.backgroundColor = colorFromHexString(sliderBackgroundView);
+   }
+   NSArray *backgroundViewSubviews = %orig;
+   if (backgroundViewSubviews) {
+    UIView *fillView = backgroundViewSubviews[0];
+    if (fillView) {
+     NSString *sliderFillView = [_preferences objectForKey:@"sliderActive"];
+     if (sliderFillView) {
+      fillView.backgroundColor = colorFromHexString(sliderFillView);
+     }
+    }
+   }
+  }
  }
- return backgroundView;
-}
-
-//the filled in part of the slider
--(UIView *)fillView {
- UIView *fillView = %orig;
- NSString *sliderFillView = [_preferences objectForKey:@"sliderActive"];
- if (sliderFillView) {
-  fillView.backgroundColor = colorFromHexString(sliderFillView);
- }
- return fillView;
+ return subviews;
 }
 
 %end
