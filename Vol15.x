@@ -98,6 +98,7 @@ static bool isNotched()
  for (UIView * origSubview in subviews) {
   if ([origSubview isMemberOfClass:%c(UIView)]) {
    if (colorString) {
+    NSLog(@"[*]Vol15 Text Color: %@",colorString);
    origSubview.backgroundColor = colorFromHexString(colorString);
    }
   }
@@ -126,8 +127,8 @@ static bool isNotched()
 	self.ringerLabel.hidden = NO;
 	self.silentModeLabel.alpha = 1;
 	self.silentModeLabel.hidden = NO;
-	//self.materialView.alpha = 0;
-	//self.materialView.hidden = NO;
+	self.materialView.alpha = 0;
+	self.materialView.hidden = NO;
 	self.slider.alpha = 1;
 	self.slider.hidden = NO;
 	[self setFrame:(CGRectMake(50, 50,self.frame.size.width,self.frame.size.height))];
@@ -144,8 +145,8 @@ static bool isNotched()
 	{
 		%orig(CGRectMake(0, -10, frame.size.width, frame.size.height));
 	}
-	//self.alpha = 1;
-	//self.hidden = NO;
+	self.alpha = 1;
+	self.hidden = NO;
 }
 
 - (CGRect)frame
@@ -179,8 +180,10 @@ static bool isNotched()
   return origLayer;
 }
 
--(CGAffineTransform)transform {
- return CGAffineTransformMakeRotation (M_PI/2.0);
+-(void)CGAffineTransform:(UIView *)arg {
+   self.materialView.transform = CGAffineTransformMakeRotation(M_PI_2);
+   self.slider.transform = CGAffineTransformMakeRotation(M_PI_2);
+   %orig(arg);
 }
 
 %end
