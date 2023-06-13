@@ -102,17 +102,10 @@ static bool isNotched()
 -(NSArray *)subviews {
  id subviews = %orig;
  NSString *colorString = [_preferences objectForKey:@"backgroundColor"];
- if (colorString) {
-  for (MTMaterialShadowView * origSubview in subviews) {
-   if ([origSubview isMemberOfClass:%c(MTMaterialShadowView)]) {
-    NSArray * subviewSubviews = origSubview.subviews;
-    //cycle through subviews in the subview
-    for (MTMaterialView * thePillBg in subviewSubviews) {
-     //the subview we wanna change will have a corner radius of at least 1
-     if (thePillBg.layer.cornerRadius >= 1) {
-      thePillBg.backgroundColor = colorFromHexString(colorString);
-     }
-    }
+ for (UIView * origSubview in subviews) {
+  if ([origSubview isMemberOfClass:%c(UIView)]) {
+   if (colorString) {
+   origSubview.backgroundColor = colorFromHexString(colorString);
    }
   }
  }
