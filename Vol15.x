@@ -1,47 +1,10 @@
 /*
-Vol15 : Created by Kota
+Vol15 : Created by Kota & Snoolie
 */
 
-#include <Foundation/Foundation.h>
-#include <UIKit/UIKit.h>
-#include <objc/runtime.h>
-
-/*
-
-Header(s) *meow*
-
-*/
-
-@class UIView, SBMediaController, SBHUDController, SBRingerHUDViewController, NSString;
-
-@interface SBRingerPillView : UIView
-
-@property (nonatomic,retain) UIView * materialView;                    //@synthesize materialView=_materialView - In the implementation block
-@property (nonatomic,retain) UIView * silentModeLabel;                              //@synthesize silentModeLabel=_silentModeLabel - In the implementation block
-@property (nonatomic,retain) UIView * ringerLabel;                                  //@synthesize ringerLabel=_ringerLabel - In the implementation block
-@property (nonatomic,retain) UIView * onLabel;                                      //@synthesize onLabel=_onLabel - In the implementation block
-@property (nonatomic,retain) UIView * offLabel;                                     //@synthesize offLabel=_offLabel - In the implementation block
-@property (nonatomic,retain) UIView * slider;                      //@synthesize slider=_slider - In the implementation block
-@property (nonatomic,copy,readwrite) UIColor * borderColor;
-@property (nonatomic,retain) UIColor * glyphTintColor;                               //@synthesize glyphTintColor=_glyphTintColor - In the implementation block
-@property (nonatomic,copy,readwrite) UIColor * backgroundColor; 
-@property (nonatomic,copy) NSArray * glyphTintBackgroundLayers;                      //@synthesize glyphTintBackgroundLayers=_glyphTintBackgroundLayers - In the implementation block
-@property (nonatomic,copy) NSArray * glyphTintShapeLayers;                           //@synthesize glyphTintShapeLayers=_glyphTintShapeLayers - In the implementation block
-@property (assign,nonatomic) unsigned long long state;  
-
-@end
-
-@interface SBRingerVolumeSliderView : UIView
-@end
-
-@interface MTMaterialShadowView : UIView {
- MTMaterialView* _materialView;
-}
-@property (nonatomic,readonly) MTMaterialView * materialView;  
-@end
-
-@interface MTMaterialView : UIView
-@end
+//since in the header we already have the needed #include's
+//we don't need to add more
+#include "Vol15.h"
 
 /*
 RGB code Created by Snoolie :3, you can find it here: 
@@ -101,23 +64,44 @@ static bool isNotched()
     return NO; 
 }
 
+//i *think* this is how you force inline a function in clang, if not yell at me (Snoolie) :P
+__attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
+    NSString *textBoobs = [_preferences objectForKey:@"textColor"];
+    if (textBoobs) {
+        daLabel.textColor = colorFromHexString(textBoobs);
+    }
+    daLabel.layer.shadowOpacity = 1.0;
+    daLabel.layer.shadowOffset = CGSizeMake(0.0f,4.0f);
+    NSString *textShadowBoobs = [_preferences objectForKey:@"textShadowColor"];
+    if (textShadowBoobs) {
+        daLabel.layer.shadowColor = colorFromHexString(textShadowBoobs).CGColor;
+    }
+}
+
 %hook SBRingerVolumeSliderView
 
--(MTMaterialShadowView *)materialView {
- id materialShadowView = %orig;
- NSString *sliderFillView = [_preferences objectForKey:@"sliderActive"];
- NSString *sliderBackgroundView = [_preferences objectForKey:@"sliderBg"];
- for (MTMaterialView * origSubview in subviews) {
-  if ([origSubview isMemberOfClass:[MTMaterialView class]]) {
-   if (sliderFillView) {
-    origSubview.fillView = colorFromHexString(sliderFillView).CGColor;
-   }
+-(NSArray *)subviews {
+ NSArray *subviews = %orig;
+ if (subviews) {
+  UIView *backgroundView = subviews[0];
+  if (backgroundView) {
+   NSString *sliderBackgroundView = [_preferences objectForKey:@"sliderBg"];
    if (sliderBackgroundView) {
-    origSubview.backgroundView = colorFromHexString(sliderBackgroundView).CGColor;
+    backgroundView.backgroundColor = colorFromHexString(sliderBackgroundView);
+   }
+   NSArray *backgroundViewSubviews = %orig;
+   if (backgroundViewSubviews) {
+    UIView *fillView = backgroundViewSubviews[0];
+    if (fillView) {
+     NSString *sliderFillView = [_preferences objectForKey:@"sliderActive"];
+     if (sliderFillView) {
+      fillView.backgroundColor = colorFromHexString(sliderFillView);
+     }
+    }
    }
   }
  }
- return materialShadowView;
+ return subviews;
 }
 
 %end
@@ -127,7 +111,7 @@ static bool isNotched()
 
 -(MTMaterialShadowView *)materialView {
  //get the original material shadow view
- id materialShadowView = %orig;
+ MTMaterialShadowView *materialShadowView = %orig;
  //MTMaterialShadowView will store the MTMaterialView property on it 
  MTMaterialView* materialView = materialShadowView.materialView;
  //safety check, make sure materialView is not NULL :P
@@ -138,6 +122,38 @@ static bool isNotched()
   }
  }
  return materialShadowView;
+}
+
+-(UILabel *)ringerLabel {
+ //the header of the ringer slider when it says "Ringer"
+ UILabel *ringerLabel = %orig;
+ //make changes to the ringerLabel
+ modifyLabel(ringerLabel);
+ return ringerLabel;
+}
+
+-(UILabel *)silentModeLabel {
+ //the header of the ringer slider when it says "Silent Mode"
+ UILabel *silentModeLabel = %orig;
+ //make changes to the silentModeLabel
+ modifyLabel(silentModeLabel);
+ return silentModeLabel;
+}
+
+-(UILabel *)onLabel {
+ //the header of the ringer slider when it says "On"
+ UILabel *onLabel = %orig;
+ //make changes to the onLabel
+ modifyLabel(onLabel);
+ return onLabel;
+}
+
+-(UILabel *)offLabel {
+ //the header of the ringer slider when it says "Off"
+ UILabel *offLabel = %orig;
+ //make changes to the offLabel
+ modifyLabel(offLabel);
+ return offLabel;
 }
 
 - (id)init 
@@ -162,7 +178,7 @@ static bool isNotched()
 	self.silentModeLabel.alpha = 1;
 	self.silentModeLabel.hidden = NO;
 	//self.materialView.alpha = 0;
-	//self.materialView.hidden = NO;
+	self.materialView.hidden = YES;
 	self.slider.alpha = 1;
 	self.slider.hidden = NO;
 	[self setFrame:(CGRectMake(50, 50,self.frame.size.width,self.frame.size.height))];
