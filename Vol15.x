@@ -31,6 +31,12 @@ Header(s) *meow*
 
 @end
 
+@interface MTMaterialShadowView : UIView
+@end
+
+@interface MTMaterialView : UIView
+@end
+
 /*
 RGB code Created by Snoolie :3, you can find it here: 
 */
@@ -92,13 +98,21 @@ static bool isNotched()
 
 %hook SBRingerPillView
 
+// so it looks like for backgroundColor hooking, we wanna hook the SBRingerPillView subviews - but once we get the MTMaterialShadowView, *then* we get the last MTMaterialView subview of *that* subview (it should have a cornerRadius) and then change the backgroundColor
 -(NSArray *)subviews {
  id subviews = %orig;
  NSString *colorString = [_preferences objectForKey:@"backgroundColor"];
- for (UIView * origSubview in subviews) {
-  if ([origSubview isMemberOfClass:%c(UIView)]) {
-   if (colorString) {
-   origSubview.backgroundColor = colorFromHexString(colorString);
+ if (colorString) {
+  for (MTMaterialShadowView * origSubview in subviews) {
+   if ([origSubview isMemberOfClass:%c(MTMaterialShadowView)]) {
+    NSArray * subviewSubviews = origSubview.subviews;
+    //cycle through subviews in the subview
+    for (MTMaterialView * thePillBg in subviews) {
+     //the subview we wanna change will have a corner radius of at least 1
+     if (thePillBg.cornerRadius >= 1) {
+      thePillBg.backgroundColor = colorFromHexString(colorString);
+     }
+    }
    }
   }
  }
