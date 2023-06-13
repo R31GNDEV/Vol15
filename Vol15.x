@@ -41,7 +41,10 @@ Header(s) *meow*
 
 @end
 
-@interface MTMaterialShadowView : UIView
+@interface MTMaterialShadowView : UIView {
+ MTMaterialView* _materialView;
+}
+@property (nonatomic,readonly) MTMaterialView * materialView;  
 @end
 
 @interface MTMaterialView : UIView
