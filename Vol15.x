@@ -64,23 +64,34 @@ static bool isNotched()
     return NO; 
 }
 
+//i *think* this is how you force inline a function in clang, if not yell at me (Snoolie) :P
+__attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
+ daLabel.layer.shadowOpacity = 1.0;
+ daLabel.layer.shadowOffset = CGPointMake(0,0);
+ //daLabel.textColor = (this will be a UIColor)
+ //daLabel.layer.shadowColor = (this will be a CGColor)
+}
+
 %hook SBRingerVolumeSliderView
 
--(MTMaterialShadowView *)materialView {
- id materialShadowView = %orig;
- NSString *sliderFillView = [_preferences objectForKey:@"sliderActive"];
+//the not filled in part of the slider
+-(UIView *)backgroundView {
+ UIView *backgroundView = %orig;
  NSString *sliderBackgroundView = [_preferences objectForKey:@"sliderBg"];
- for (MTMaterialView * origSubview in subviews) {
-  if ([origSubview isMemberOfClass:[MTMaterialView class]]) {
-   if (sliderFillView) {
-    origSubview.fillView = colorFromHexString(sliderFillView).CGColor;
-   }
-   if (sliderBackgroundView) {
-    origSubview.backgroundView = colorFromHexString(sliderBackgroundView).CGColor;
-   }
-  }
+ if (sliderBackgroundView) {
+  backgroundView.backgroundColor = colorFromHexString(sliderBackgroundView);
  }
- return materialShadowView;
+ return backgroundView;
+}
+
+//the filled in part of the slider
+-(UIView *)fillView {
+ UIView *fillView = %orig;
+ NSString *sliderFillView = [_preferences objectForKey:@"sliderActive"];
+ if (sliderFillView) {
+  fillView.backgroundColor = colorFromHexString(sliderFillView);
+ }
+ return fillView;
 }
 
 %end
@@ -101,6 +112,38 @@ static bool isNotched()
   }
  }
  return materialShadowView;
+}
+
+-(UILabel *)ringerLabel {
+ //the header of the ringer slider when it says "Ringer"
+ UILabel *ringerLabel = %orig;
+ //make changes to the ringerLabel
+ modifyLabel(ringerLabel);
+ return ringerLabel;
+}
+
+-(UILabel *)silentModeLabel {
+ //the header of the ringer slider when it says "Silent Mode"
+ UILabel *silentModeLabel = %orig;
+ //make changes to the silentModeLabel
+ modifyLabel(silentModeLabel);
+ return silentModeLabel;
+}
+
+-(UILabel *)onLabel {
+ //the header of the ringer slider when it says "On"
+ UILabel *onLabel = %orig;
+ //make changes to the onLabel
+ modifyLabel(onLabel);
+ return onLabel;
+}
+
+-(UILabel *)offLabel {
+ //the header of the ringer slider when it says "Off"
+ UILabel *offLabel = %orig;
+ //make changes to the offLabel
+ modifyLabel(offLabel);
+ return offLabel;
 }
 
 - (id)init 
