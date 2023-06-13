@@ -32,13 +32,6 @@ Header(s) *meow*
 @end
 
 @interface SBRingerVolumeSliderView : UIView
-
-@property (nonatomic,retain) UIView * fillView;                    //@synthesize materialView=_materialView - In the implementation block
-@property (nonatomic,retain) UIView * backgroundView;                              //@synthesize silentModeLabel=_silentModeLabel - In the implementation block
-@property (nonatomic,retain) UIView * ringerLabel;                                  //@synthesize ringerLabel=_ringerLabel - In the implementation block
-@property (nonatomic,copy,readwrite) UIColor * fillView;
-@property (nonatomic,copy,readwrite) UIColor * backgroundView; 
-
 @end
 
 @interface MTMaterialShadowView : UIView
@@ -105,6 +98,27 @@ static bool isNotched()
     return NO; 
 }
 
+%hook SBRingerVolumeSliderView
+
+-(MTMaterialShadowView *)materialView {
+ id materialShadowView = %orig;
+ NSString *sliderFillView = [_preferences objectForKey:@"sliderActive"];
+ NSString *sliderBackgroundView = [_preferences objectForKey:@"sliderBg"];
+ for (MTMaterialView * origSubview in subviews) {
+  if ([origSubview isMemberOfClass:[MTMaterialView class]]) {
+   if (sliderFillView) {
+    origSubview.fillView = colorFromHexString(sliderFillView).CGColor;
+   }
+   if (sliderBackgroundView) {
+    origSubview.backgroundView = colorFromHexString(sliderBackgroundView).CGColor;
+   }
+  }
+ }
+ return materialShadowView;
+}
+
+%end
+
 
 %hook SBRingerPillView
 
@@ -117,10 +131,10 @@ static bool isNotched()
  if (materialView) {
   NSString *colorString = [_preferences objectForKey:@"backgroundColor"];
   if (colorString) {
-   materialView.layer.backgroundColor = colorFromHexString(colorString);
+   materialView.layer.backgroundColor = colorFromHexString(colorString).CGColor;
   }
  }
- return materialShadowView
+ return materialShadowView;
 }
 
 - (id)init 
