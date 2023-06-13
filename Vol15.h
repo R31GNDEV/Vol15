@@ -34,11 +34,11 @@ Header(s) *meow*
 @interface SBRingerVolumeSliderView : UIView
 @end
 
+@interface MTMaterialView : UIView
+@end
+
 @interface MTMaterialShadowView : UIView {
  MTMaterialView* _materialView;
 }
 @property (nonatomic,readonly) MTMaterialView * materialView;  
-@end
-
-@interface MTMaterialView : UIView
 @end

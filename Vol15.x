@@ -67,7 +67,7 @@ static bool isNotched()
 //i *think* this is how you force inline a function in clang, if not yell at me (Snoolie) :P
 __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
  daLabel.layer.shadowOpacity = 1.0;
- daLabel.layer.shadowOffset = CGPointMake(0,0);
+ daLabel.layer.shadowOffset = CGSizeMake(0,0);
  //daLabel.textColor = (this will be a UIColor)
  //daLabel.layer.shadowColor = (this will be a CGColor)
 }
@@ -101,7 +101,7 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
 
 -(MTMaterialShadowView *)materialView {
  //get the original material shadow view
- id materialShadowView = %orig;
+ MTMaterialShadowView *materialShadowView = %orig;
  //MTMaterialShadowView will store the MTMaterialView property on it 
  MTMaterialView* materialView = materialShadowView.materialView;
  //safety check, make sure materialView is not NULL :P
