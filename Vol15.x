@@ -102,10 +102,17 @@ static bool isNotched()
 -(NSArray *)subviews {
  id subviews = %orig;
  NSString *colorString = [_preferences objectForKey:@"backgroundColor"];
- for (UIView * origSubview in subviews) {
-  if ([origSubview isMemberOfClass:%c(UIView)]) {
-   if (colorString) {
-   origSubview.backgroundColor = colorFromHexString(colorString);
+ if (colorString) {
+  for (MTMaterialShadowView * origSubview in subviews) {
+   if ([origSubview isMemberOfClass:%c(MTMaterialShadowView)]) {
+    NSArray * subviewSubviews = origSubview.subviews;
+    //cycle through subviews in the subview
+    for (MTMaterialView * thePillBg in subviewSubviews) {
+     //the subview we wanna change will have a corner radius of at least 1
+     if (thePillBg.layer.cornerRadius >= 1) {
+      thePillBg.backgroundColor = colorFromHexString(colorString);
+     }
+    }
    }
   }
  }
@@ -133,8 +140,8 @@ static bool isNotched()
 	self.ringerLabel.hidden = NO;
 	self.silentModeLabel.alpha = 1;
 	self.silentModeLabel.hidden = NO;
-	self.materialView.alpha = 0;
-	self.materialView.hidden = NO;
+	//self.materialView.alpha = 0;
+	//self.materialView.hidden = NO;
 	self.slider.alpha = 1;
 	self.slider.hidden = NO;
 	[self setFrame:(CGRectMake(50, 50,self.frame.size.width,self.frame.size.height))];
@@ -151,8 +158,8 @@ static bool isNotched()
 	{
 		%orig(CGRectMake(0, -10, frame.size.width, frame.size.height));
 	}
-	self.alpha = 1;
-	self.hidden = NO;
+	//self.alpha = 1;
+	//self.hidden = NO;
 }
 
 - (CGRect)frame
