@@ -31,6 +31,16 @@ Header(s) *meow*
 
 @end
 
+@interface SBRingerVolumeSliderView : UIView
+
+@property (nonatomic,retain) UIView * fillView;                    //@synthesize materialView=_materialView - In the implementation block
+@property (nonatomic,retain) UIView * backgroundView;                              //@synthesize silentModeLabel=_silentModeLabel - In the implementation block
+@property (nonatomic,retain) UIView * ringerLabel;                                  //@synthesize ringerLabel=_ringerLabel - In the implementation block
+@property (nonatomic,copy,readwrite) UIColor * fillView;
+@property (nonatomic,copy,readwrite) UIColor * backgroundView; 
+
+@end
+
 @interface MTMaterialShadowView : UIView
 @end
 
@@ -116,6 +126,8 @@ static bool isNotched()
    }
   }
  }
+ return subviews;
+}
 
 - (id)init 
 {
