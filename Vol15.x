@@ -64,46 +64,6 @@ static bool isNotched()
     return NO; 
 }
 
-//i *think* this is how you force inline a function in clang, if not yell at me (Snoolie) :P
-__attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
-    NSString *textBoobs = [_preferences objectForKey:@"textColor"];
-    if (textBoobs) {
-        daLabel.textColor = colorFromHexString(textBoobs);
-    }
-    daLabel.layer.shadowOpacity = 1.0;
-    daLabel.layer.shadowOffset = CGSizeMake(0.0f,4.0f);
-    NSString *textShadowBoobs = [_preferences objectForKey:@"textShadowColor"];
-    if (textShadowBoobs) {
-        daLabel.layer.shadowColor = colorFromHexString(textShadowBoobs).CGColor;
-    }
-}
-
-%hook SBElasticSliderMaterialWrapperView
-
--(NSArray *)subviews {
- NSArray *subviews = %orig;
- if (subviews) {
-   NSString *volColor = [_preferences objectForKey:@"backgroundVolColor"];
-   if (volColor) {
-    self.backgroundColor = colorFromHexString(volColor);
-   }
- }
- return subviews;
-}
-
--(CALayer *)layer {
-  CALayer *origLayer = %orig;
-  NSString *volGlowColorString = [_preferences objectForKey:@"volShadowColor"];
-  if (volGlowColorString) {
-    origLayer.shadowColor = colorFromHexString(volGlowColorString).CGColor;
-  }
-  origLayer.shadowOpacity = 1;
-  origLayer.shadowOffset = CGSizeMake(0.0f,4.0f);
-  return origLayer;
-}
-
-%end
-
 %hook SBRingerVolumeSliderView
 
 -(NSArray *)subviews {
@@ -148,38 +108,6 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
   }
  }
  return materialShadowView;
-}
-
--(UILabel *)ringerLabel {
- //the header of the ringer slider when it says "Ringer"
- UILabel *ringerLabel = %orig;
- //make changes to the ringerLabel
- modifyLabel(ringerLabel);
- return ringerLabel;
-}
-
--(UILabel *)silentModeLabel {
- //the header of the ringer slider when it says "Silent Mode"
- UILabel *silentModeLabel = %orig;
- //make changes to the silentModeLabel
- modifyLabel(silentModeLabel);
- return silentModeLabel;
-}
-
--(UILabel *)onLabel {
- //the header of the ringer slider when it says "On"
- UILabel *onLabel = %orig;
- //make changes to the onLabel
- modifyLabel(onLabel);
- return onLabel;
-}
-
--(UILabel *)offLabel {
- //the header of the ringer slider when it says "Off"
- UILabel *offLabel = %orig;
- //make changes to the offLabel
- modifyLabel(offLabel);
- return offLabel;
 }
 
 - (id)init 
