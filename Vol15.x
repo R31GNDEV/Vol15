@@ -64,17 +64,30 @@ static bool isNotched()
     return NO; 
 }
 
+__attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
+    NSString *textSex = [_preferences objectForKey:@"textSexKey"];
+    if (textSex) {
+        daLabel.textColor = colorFromHexString(textSex);
+    }
+    NSString *textSexShadow = [_preferences objectForKey:@"textSexShadowKey"];
+    if (textSexShadow) {
+        daLabel.layer.shadowColor = colorFromHexString(textSexShadow).CGColor;
+    }
+ daLabel.layer.shadowOpacity = 1.0;
+ daLabel.layer.shadowOffset = CGSizeMake(0,0);
+}
+
 %hook SBRingerVolumeSliderView
 
 -(NSArray *)subviews {
- NSArray *subviews = %orig;
- if (subviews) {
+  NSArray *subviews = %orig;
   UIView *backgroundView = subviews[0];
   if (backgroundView) {
    NSString *sliderBackgroundView = [_preferences objectForKey:@"sliderBg"];
    if (sliderBackgroundView) {
     backgroundView.backgroundColor = colorFromHexString(sliderBackgroundView);
    }
+  }
    NSArray *backgroundViewSubviews = %orig;
    if (backgroundViewSubviews) {
     UIView *fillView = backgroundViewSubviews[0];
@@ -85,13 +98,36 @@ static bool isNotched()
      }
     }
    }
-  }
- }
  return subviews;
 }
 
 %end
 
+%hook SBElasticSliderMaterialWrapperView
+
+-(NSArray *)subviews {
+ NSArray *subviews = %orig;
+ if (subviews) {
+   NSString *volColor = [_preferences objectForKey:@"backgroundVolColor"];
+   if (volColor) {
+    self.backgroundColor = colorFromHexString(volColor);
+   }
+ }
+ return subviews;
+}
+
+-(CALayer *)layer {
+  CALayer *origLayer = %orig;
+  NSString *volShadowColorString = [_preferences objectForKey:@"volShadowColor"];
+  if (volShadowColorString) {
+    origLayer.shadowColor = colorFromHexString(volShadowColorString).CGColor;
+  }
+  origLayer.shadowOpacity = 1;
+  origLayer.shadowOffset = CGSizeMake(3.0f,3.0f);
+  return origLayer;
+}
+
+%end
 
 %hook SBRingerPillView
 
@@ -106,8 +142,45 @@ static bool isNotched()
   if (colorString) {
    materialView.layer.backgroundColor = colorFromHexString(colorString).CGColor;
   }
+  CGFloat setCornerRadius = [_preferences floatForKey:@"cornerRadius"];
+  if (!(setCornerRadius >= 0)){
+    setCornerRadius = 1;
+  }
+  materialView.layer.cornerRadius = setCornerRadius;
  }
  return materialShadowView;
+}
+
+-(UILabel *)ringerLabel {
+ //the header of the ringer slider when it says "Ringer"
+ UILabel *ringerLabel = %orig;
+ //make changes to the ringerLabel
+ modifyLabel(ringerLabel);
+ return ringerLabel;
+}
+
+-(UILabel *)silentModeLabel {
+ //the header of the ringer slider when it says "Silent Mode"
+ UILabel *silentModeLabel = %orig;
+ //make changes to the silentModeLabel
+ modifyLabel(silentModeLabel);
+ return silentModeLabel;
+}
+
+-(UILabel *)onLabel {
+ //the header of the ringer slider when it says "On"
+ UILabel *onLabel = %orig;
+ //make changes to the onLabel
+ modifyLabel(onLabel);
+ return onLabel;
+}
+
+-(UILabel *)offLabel {
+ //the header of the ringer slider when it says "Off"
+ UILabel *offLabel = %orig;
+ //make changes to the offLabel
+ modifyLabel(offLabel);
+ return offLabel;
 }
 
 - (id)init 
@@ -174,11 +247,6 @@ static bool isNotched()
   }
   origLayer.shadowOpacity = 1;
   origLayer.shadowOffset = CGSizeMake(0.0f,4.0f);
-  CGFloat setCornerRadius = [_preferences floatForKey:@"cornerRadius"];
-  if (!(setCornerRadius >= 0)){
-    setCornerRadius = 1;
-  }
-  origLayer.cornerRadius = setCornerRadius;
   return origLayer;
 }
 

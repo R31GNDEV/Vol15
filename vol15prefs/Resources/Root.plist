@@ -87,6 +87,7 @@
 			<string>Root</string>
 			<key>PostNotification</key>
 			<string>online.transrights.vol15/ReloadPrefs</string>
+		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
@@ -187,7 +188,7 @@
 			<key>default</key>
 			<string>#33b5e5</string>
 			<key>key</key>
-			<string>textColor</string>
+			<string>textSexKey</string>
 			<key>label</key>
 			<string>Text Color Selector</string>
 			<key>showAlphaSlider</key>
@@ -205,7 +206,7 @@
 			<key>default</key>
 			<string>#33b5e5</string>
 			<key>key</key>
-			<string>textShadowColor</string>
+			<string>textSexShadowKey</string>
 			<key>label</key>
 			<string>Text Shadow Color Selector</string>
 			<key>showAlphaSlider</key>
