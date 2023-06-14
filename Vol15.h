@@ -35,6 +35,7 @@ Header(s) *meow*
 @end
 
 @interface SBElasticSliderMaterialWrapperView : UIView
+@property(nonatomic, assign, readwrite) CGAffineTransform *transform;
 @end
 
 @interface MTMaterialView : UIView

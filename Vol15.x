@@ -9,6 +9,7 @@ Vol15 : Created by Kota & Snoolie
 /*
 RGB code Created by Snoolie :3, you can find it here: 
 */
+
 UIColor* colorFromHexString(NSString* hexString) {
     NSString *daString = [hexString stringByReplacingOccurrencesOfString:@" " withString:@""];
     if (![daString containsString:@"#"]) {
@@ -32,6 +33,10 @@ UIColor* colorFromHexString(NSString* hexString) {
 
 NSUserDefaults *_preferences;
 BOOL _enabled;
+
+/*
+Get if a Device is notched or not for frame positioning.
+*/
 
 static bool isNotched()
 {
@@ -64,6 +69,10 @@ static bool isNotched()
     return NO; 
 }
 
+/*
+Modify UI Labels
+*/
+
 __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
     NSString *textSex = [_preferences objectForKey:@"textSexKey"];
     if (textSex) {
@@ -76,6 +85,11 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
  daLabel.layer.shadowOpacity = 1.0;
  daLabel.layer.shadowOffset = CGSizeMake(0,0);
 }
+
+
+/*
+Hook 1
+*/
 
 %hook SBRingerVolumeSliderView
 
@@ -103,8 +117,16 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
 
 %end
 
-%hook SBElasticSliderMaterialWrapperView
+/*
+Hook 2
+*/
 
+%hook SBElasticSliderMaterialWrapperView
+/* test this
+-(CGAffineTransform)transform {
+    self.transform = CGAffineTransformMakeRotation(M_PI/2.0);
+}
+*/
 -(NSArray *)subviews {
  NSArray *subviews = %orig;
  if (subviews) {
@@ -128,6 +150,10 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
 }
 
 %end
+
+/*
+Hook 3
+*/
 
 %hook SBRingerPillView
 
@@ -194,20 +220,8 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
 
 - (void)didMoveToWindow
 {
-	self.alpha = 1;
-	self.hidden = NO;
-	self.onLabel.alpha = 1;
-	self.onLabel.hidden = NO;
-	self.offLabel.alpha = 1;
-	self.offLabel.hidden = NO;
-	self.ringerLabel.alpha = 1;
-	self.ringerLabel.hidden = NO;
-	self.silentModeLabel.alpha = 1;
-	self.silentModeLabel.hidden = NO;
 	self.materialView.alpha = 0.5;
 	//self.materialView.hidden = YES;
-	self.slider.alpha = 1;
-	self.slider.hidden = NO;
 	[self setFrame:(CGRectMake(50, 50,self.frame.size.width,self.frame.size.height))];
 	%orig;
 }
@@ -249,14 +263,13 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
   origLayer.shadowOffset = CGSizeMake(0.0f,4.0f);
   return origLayer;
 }
-
--(void)CGAffineTransform:(UIView *)arg {
-   self.materialView.transform = CGAffineTransformMakeRotation(M_PI_2);
-   self.slider.transform = CGAffineTransformMakeRotation(M_PI_2);
-   %orig(arg);
-}
-
+/* Still testing (Vertical Ringer)
+*/
 %end
+
+/*
+Init prefs
+*/
 
 %ctor {
 	_preferences = [[NSUserDefaults alloc] initWithSuiteName:@"online.transrights.vol15"];

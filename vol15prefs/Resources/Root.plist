@@ -74,11 +74,11 @@
 			<key>key</key>
 			<string>cornerRadius</string>
 			<key>default</key>
-			<string>5</string>
+			<string>20</string>
 			<key>min</key>
 			<string>1</string>
 			<key>max</key>
-			<string>10</string>
+			<string>100</string>
 			<key>isSegmented</key>
 			<true/>
 			<key>label</key>								<!-- The label will be used for the label above the slider -->
