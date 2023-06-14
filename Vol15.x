@@ -78,6 +78,32 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
     }
 }
 
+%hook SBElasticSliderMaterialWrapperView
+
+-(NSArray *)subviews {
+ NSArray *subviews = %orig;
+ if (subviews) {
+   NSString *volColor = [_preferences objectForKey:@"backgroundVolColor"];
+   if (volColor) {
+    self.backgroundColor = colorFromHexString(volColor);
+   }
+ }
+ return subviews;
+}
+
+-(CALayer *)layer {
+  CALayer *origLayer = %orig;
+  NSString *volGlowColorString = [_preferences objectForKey:@"volShadowColor"];
+  if (volGlowColorString) {
+    origLayer.shadowColor = colorFromHexString(volGlowColorString).CGColor;
+  }
+  origLayer.shadowOpacity = 1;
+  origLayer.shadowOffset = CGSizeMake(0.0f,4.0f);
+  return origLayer;
+}
+
+%end
+
 %hook SBRingerVolumeSliderView
 
 -(NSArray *)subviews {
@@ -177,8 +203,8 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
 	self.ringerLabel.hidden = NO;
 	self.silentModeLabel.alpha = 1;
 	self.silentModeLabel.hidden = NO;
-	//self.materialView.alpha = 0;
-	self.materialView.hidden = YES;
+	self.materialView.alpha = 0.5;
+	//self.materialView.hidden = YES;
 	self.slider.alpha = 1;
 	self.slider.hidden = NO;
 	[self setFrame:(CGRectMake(50, 50,self.frame.size.width,self.frame.size.height))];
@@ -212,13 +238,6 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
 	}
 }
 
-- (void)setMaterialView:(UIView *)arg
-{
-	arg.alpha = 1;
-	arg.hidden = NO;
-	%orig(arg);
-}
-
 -(CALayer *)layer {
   CALayer *origLayer = %orig;
   NSString *glowColorString = [_preferences objectForKey:@"shadowColor"];
@@ -227,6 +246,11 @@ __attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
   }
   origLayer.shadowOpacity = 1;
   origLayer.shadowOffset = CGSizeMake(0.0f,4.0f);
+  CGFloat setCornerRadius = [_preferences floatForKey:@"cornerRadius"];
+  if (!(setCornerRadius >= 0)){
+    setCornerRadius = 1;
+  }
+  origLayer.cornerRadius = setCornerRadius;
   return origLayer;
 }
 

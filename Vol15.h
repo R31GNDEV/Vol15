@@ -15,7 +15,6 @@ Header(s) *meow*
 @class UIView, SBMediaController, SBHUDController, SBRingerHUDViewController, NSString;
 
 @interface SBRingerPillView : UIView
-
 @property (nonatomic,retain) UIView * materialView;                    //@synthesize materialView=_materialView - In the implementation block
 @property (nonatomic,retain) UIView * silentModeLabel;                              //@synthesize silentModeLabel=_silentModeLabel - In the implementation block
 @property (nonatomic,retain) UIView * ringerLabel;                                  //@synthesize ringerLabel=_ringerLabel - In the implementation block
@@ -28,14 +27,14 @@ Header(s) *meow*
 @property (nonatomic,copy) NSArray * glyphTintBackgroundLayers;                      //@synthesize glyphTintBackgroundLayers=_glyphTintBackgroundLayers - In the implementation block
 @property (nonatomic,copy) NSArray * glyphTintShapeLayers;                           //@synthesize glyphTintShapeLayers=_glyphTintShapeLayers - In the implementation block
 @property (assign,nonatomic) unsigned long long state;  
-
 @end
 
 @interface SBRingerVolumeSliderView : UIView
-
 @property (nonatomic,copy,readwrite) UIColor * fillView;
 @property (nonatomic,copy,readwrite) UIColor * backgroundView; 
+@end
 
+@interface SBElasticSliderMaterialWrapperView : UIView
 @end
 
 @interface MTMaterialView : UIView
