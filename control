@@ -1,9 +1,9 @@
 Package: online.transrights.vol15
 Name: Vol15
-Version: 0.0.2
+Version: 1.0.0
 Architecture: iphoneos-arm
 Description: Change your volume UI colors & more!
-Maintainer: Kota
-Author: Kota
+Maintainer: Kota & Snoolie
+Author: Kota & Snoolie
 Section: Tweaks
-Depends: mobilesubstrate (>= 0.9.5000)
+Depends: mobilesubstrate (>= 0.9.5000), ws.hbang.alderis (>= 1.1)
