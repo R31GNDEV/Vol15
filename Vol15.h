@@ -46,4 +46,5 @@ Header(s) *meow*
     MTMaterialView *_materialView;
 }
 @property(nonatomic, readonly) MTMaterialView *materialView;
+@property(nonatomic, assign, readwrite, getter=isOpaque) BOOL opaque;
 @end

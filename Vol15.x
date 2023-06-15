@@ -73,17 +73,13 @@ static bool isNotched()
 Modify UI Labels
 */
 
-__attribute__((always_inline)) static void modifyLabel(UILabel *daLabel) {
-    NSString *textSex = [_preferences objectForKey:@"textSexKey"];
-    if (textSex) {
-        daLabel.textColor = colorFromHexString(textSex);
-    }
+__attribute__((always_inline)) static void modifyLabel(UILabel *ringerLabel) {
     NSString *textSexShadow = [_preferences objectForKey:@"textSexShadowKey"];
     if (textSexShadow) {
-        daLabel.layer.shadowColor = colorFromHexString(textSexShadow).CGColor;
+        ringerLabel.layer.shadowColor = colorFromHexString(textSexShadow).CGColor;
     }
- daLabel.layer.shadowOpacity = 1.0;
- daLabel.layer.shadowOffset = CGSizeMake(0,0);
+ ringerLabel.layer.shadowOpacity = 1.0;
+ ringerLabel.layer.shadowOffset = CGSizeMake(0,0);
 }
 
 
@@ -113,6 +109,17 @@ Hook 1
     }
    }
  return subviews;
+}
+
+-(CALayer *)layer {
+  CALayer *origLayer = %orig;
+  origLayer.shadowOpacity = 1;
+  origLayer.shadowOffset = CGSizeMake(3.0f,3.0f);
+  NSString *volShadowColorString2 = [_preferences objectForKey:@"volShadowColor2"];
+  if (volShadowColorString2) {
+    origLayer.shadowColor = colorFromHexString(volShadowColorString2).CGColor;
+  }
+  return origLayer;
 }
 
 %end
@@ -153,6 +160,33 @@ Hook 3
 
 %hook SBRingerPillView
 
+-(instancetype)init { //o yeahhhh the new init method baby
+ SBRingerPillView *ret = %orig;
+ NSArray *retSubviews = ret.subviews;
+ //standard subview cycling - but dont worry, in the init method, subviews are only cycled through the first time the SBRingerPillView is created and never again. 
+ //You can also prob reduce the need for a subview cycle here since you're gonna reliably 
+ //know what indexes subviews are gonna be at and exactly what subviews are gonna be added, but eh im lazy and this still works :P
+ for (UILabel * ringerLabel in retSubviews) {
+  if ([ringerLabel isMemberOfClass:[UILabel class]]) {
+   NSString *daLabelText = ringerLabel.text;
+   if ([daLabelText isEqualToString:@"Ringer"]) {
+    ringerLabel.text = [_preferences objectForKey:@"setText"];
+   } else if ([daLabelText isEqualToString:@"Off"]) {
+    ringerLabel.text = [_preferences objectForKey:@"setText3"];
+   } 
+   else {
+    ringerLabel.text = [_preferences objectForKey:@"setText2"];
+   }
+   NSString *textSex = [_preferences objectForKey:@"textSexKey"];
+   if (textSex) {
+    ringerLabel.textColor = colorFromHexString(textSex);
+   }
+   ringerLabel.shadowOffset = CGSizeMake(0,0);
+  }
+ }
+ return ret;
+}
+
 -(MTMaterialShadowView *)materialView {
  //get the original material shadow view
  MTMaterialShadowView *materialShadowView = %orig;
@@ -178,7 +212,6 @@ Hook 3
  UILabel *ringerLabel = %orig;
  //make changes to the ringerLabel
  modifyLabel(ringerLabel);
- ringerLabel.text = [_preferences objectForKey:@"setText"];
  return ringerLabel;
 }
 
@@ -206,14 +239,14 @@ Hook 3
  return offLabel;
 }
 
-- (id)init 
-{
-	id x = %orig;
-	[self setFrame:(CGRectMake(50, 50,self.frame.size.width,self.frame.size.height))];
-	self.alpha = 1;
-	self.hidden = NO;
-	return x;
-}
+//- (id)init 
+//{
+//	id x = %orig;
+//	[self setFrame:(CGRectMake(50, 50,self.frame.size.width,self.frame.size.height))];
+//	self.alpha = 1;
+//	self.hidden = NO;
+//	return x;
+//}
 
 - (void)didMoveToWindow
 {
