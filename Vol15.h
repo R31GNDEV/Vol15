@@ -16,11 +16,11 @@ Header(s) *meow*
 
 @interface SBRingerPillView : UIView
 @property(nonatomic, retain) UIView *materialView;
-@property(nonatomic, retain) UIView *silentModeLabel;
-@property(nonatomic, retain) UIView *ringerLabel;
-@property(nonatomic, retain) UIView *onLabel;
-@property(nonatomic, retain) UIView *offLabel;
-@property(nonatomic, retain) UIView *slider;
+@property(nonatomic, strong, readwrite) UIView *silentModeLabel;
+@property(nonatomic, strong, readwrite) UIView *ringerLabel;
+@property(nonatomic, strong, readwrite) UIView *onLabel;
+@property(nonatomic, strong, readwrite) UIView *offLabel;
+@property(nonatomic, strong, readwrite) UIView *slider;
 @property(nonatomic, copy, readwrite) UIColor *borderColor;
 @property(nonatomic, retain) UIColor *glyphTintColor;
 @property(nonatomic, copy, readwrite) UIColor *backgroundColor;

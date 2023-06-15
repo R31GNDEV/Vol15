@@ -2,11 +2,13 @@
 #import "VOLRootListController.h"
 #import <spawn.h>
 #import <Preferences/PSTableCell.h>
+#import <Preferences/PSSpecifier.h>
 
 id daRootListViewController;
 
-@implementation VOLRootListController
 
+
+@implementation VOLRootListController
 - (NSArray *)specifiers {
 	if (!_specifiers) {
 		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];

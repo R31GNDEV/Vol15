@@ -122,11 +122,7 @@ Hook 2
 */
 
 %hook SBElasticSliderMaterialWrapperView
-/* test this
--(CGAffineTransform)transform {
-    self.transform = CGAffineTransformMakeRotation(M_PI/2.0);
-}
-*/
+
 -(NSArray *)subviews {
  NSArray *subviews = %orig;
  if (subviews) {
@@ -182,6 +178,7 @@ Hook 3
  UILabel *ringerLabel = %orig;
  //make changes to the ringerLabel
  modifyLabel(ringerLabel);
+ ringerLabel.text = [_preferences objectForKey:@"setText"];
  return ringerLabel;
 }
 
@@ -263,8 +260,7 @@ Hook 3
   origLayer.shadowOffset = CGSizeMake(0.0f,4.0f);
   return origLayer;
 }
-/* Still testing (Vertical Ringer)
-*/
+
 %end
 
 /*
