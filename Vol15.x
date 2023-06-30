@@ -188,11 +188,8 @@ Hook 3
 }
 
 -(MTMaterialShadowView *)materialView {
- //get the original material shadow view
  MTMaterialShadowView *materialShadowView = %orig;
- //MTMaterialShadowView will store the MTMaterialView property on it 
  MTMaterialView* materialView = materialShadowView.materialView;
- //safety check, make sure materialView is not NULL :P
  if (materialView) {
   NSString *colorString = [_preferences objectForKey:@"backgroundColor"];
   if (colorString) {
@@ -303,8 +300,12 @@ Init prefs
 %ctor {
 	_preferences = [[NSUserDefaults alloc] initWithSuiteName:@"online.transrights.vol15"];
 	[_preferences registerDefaults:@{
-		@"enabled" : @YES,
-	}];
+        @"enabled" : @YES,
+        @"setText" : @"Vol15",
+        @"setText" : @"Vol15(off)",
+        @"setText2" : @"Thanks For Using!",
+        @"setText3" : @"Thanks For Using!",
+    }];
 	_enabled = [_preferences boolForKey:@"enabled"];
 	if(_enabled) {
 		NSLog(@"[Vol15] Enabled");

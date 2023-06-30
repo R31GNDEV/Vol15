@@ -1,11 +1,11 @@
-#before-package::
-#	python3 abi.py $(THEOS_OBJ_DIR)/arm64e/*.dylib
+before-package::
+	python3 abi.py $(THEOS_OBJ_DIR)/arm64e/*.dylib
 
 TARGET := iphone:clang:13.0
 PREFIX = $(THEOS)/toolchain/linux/usr/bin/
 SYSROOT = $(THEOS)/sdks/iPhoneOS14.5.sdk
 INSTALL_TARGET_PROCESSES = SpringBoard
-#THEOS_PACKAGE_SCHEME = rootless
+THEOS_PACKAGE_SCHEME = rootless
 Vol15_EXTRA_FRAMEWORKS += Alderis
 ARCHS = arm64e arm64
 
